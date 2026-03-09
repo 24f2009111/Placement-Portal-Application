@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Companies - Admin{% endblock %}
+
+{% block content %}
+<h2>Company Management</h2>
+
+<ul class="nav nav-tabs mb-4" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link active" data-bs-toggle="tab" href="#pending">Pending ({{ pending|length }})</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" data-bs-toggle="tab" href="#approved">Approved ({{ approved|length }})</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" data-bs-toggle="tab" href="#rejected">Rejected ({{ rejected|length }})</a>
+    </li>
+</ul>
+
+<div class="tab-content">
+    <div id="pending" class="tab-pane fade show active">
+        <h4>Pending Approvals</h4>
+        {% if pending %}
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Company Name</th>
+                            <th>HR Contact</th>
+                            <th>Website</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for company in pending %}
+                            <tr>
+                                <td>{{ company.name }}</td>
+                                <td>{{ company.hr_contact or 'N/A' }}</td>
+                                <td>{{ company.website or 'N/A' }}</td>
+                                <td>
+                                    <a href="{{ url_for('admin.approve_company', company_id=company.id) }}" class="btn btn-sm btn-success">Approve</a>
+                                    <a href="{{ url_for('admin.reject_company', company_id=company.id) }}" class="btn btn-sm btn-danger">Reject</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-muted">No pending approvals</p>
+        {% endif %}
+    </div>
+
+    <div id="approved" class="tab-pane fade">
+        <h4>Approved Companies</h4>
+        {% if approved %}
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Company Name</th>
+                            <th>HR Contact</th>
+                            <th>Website</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for company in approved %}
+                            <tr>
+                                <td>{{ company.name }}</td>
+                                <td>{{ company.hr_contact or 'N/A' }}</td>
+                                <td>{{ company.website or 'N/A' }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-muted">No approved companies</p>
+        {% endif %}
+    </div>
+
+    <div id="rejected" class="tab-pane fade">
+        <h4>Rejected Companies</h4>
+        {% if rejected %}
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Company Name</th>
+                            <th>HR Contact</th>
+                            <th>Website</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for company in rejected %}
+                            <tr>
+                                <td>{{ company.name }}</td>
+                                <td>{{ company.hr_contact or 'N/A' }}</td>
+                                <td>{{ company.website or 'N/A' }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-muted">No rejected companies</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
