@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Placement Portal{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-5 mx-auto">
+        <div class="card p-4">
+            <h3 class="mb-4">Login to Your Account</h3>
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                <div class="mb-3">
+                    {{ form.username.label(class="form-label") }}
+                    {% if form.username.errors %}
+                        {{ form.username(class="form-control is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.username.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.username(class="form-control") }}
+                    {% endif %}
+                </div>
+                <div class="mb-3">
+                    {{ form.password.label(class="form-label") }}
+                    {% if form.password.errors %}
+                        {{ form.password(class="form-control is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.password.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.password(class="form-control") }}
+                    {% endif %}
+                </div>
+                {{ form.submit(class="btn btn-primary w-100") }}
+            </form>
+            <hr>
+            <p class="text-center">Don't have an account?</p>
+            <a href="{{ url_for('auth.register_company') }}" class="btn btn-outline-primary w-100 mb-2">Register as Company</a>
+            <a href="{{ url_for('auth.register_student') }}" class="btn btn-outline-secondary w-100">Register as Student</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
