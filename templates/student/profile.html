@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h4>Student Profile</h4>
+            </div>
+            <div class="card-body">
+                <p><strong>Name:</strong> {{ student.name }}</p>
+                <p><strong>Contact:</strong> {{ student.contact or 'Not provided' }}</p>
+                <p><strong>Resume:</strong> {{ student.resume or 'Not uploaded' }}</p>
+                <p><strong>Member Since:</strong> {{ student.user.created_at.strftime('%Y-%m-%d') if student.user.created_at else 'N/A' }}</p>
+            </div>
+        </div>
+        <a href="{{ url_for('student.dashboard') }}" class="btn btn-secondary mt-3">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

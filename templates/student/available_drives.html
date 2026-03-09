@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Available Placement Drives{% endblock %}
+
+{% block content %}
+<h2>Available Placement Drives</h2>
+
+{% if drives %}
+    {% for drive in drives %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h5 class="card-title">{{ drive.job_title }}</h5>
+                        <p class="card-text"><strong>Company:</strong> {{ drive.company.name }}</p>
+                        <p class="card-text"><strong>Description:</strong> {{ drive.job_description[:100] }}...</p>
+                        <p class="card-text"><strong>Deadline:</strong> {{ drive.deadline.strftime('%Y-%m-%d') if drive.deadline else 'N/A' }}</p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <a href="{{ url_for('student.apply_for_drive', drive_id=drive.id) }}" class="btn btn-primary">Apply Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% else %}
+    <p class="text-muted">No approved drives available at the moment.</p>
+{% endif %}
+{% endblock %}
