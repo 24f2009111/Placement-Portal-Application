@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Placement Drive{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <h2>Edit Placement Drive</h2>
+        <form method="POST" class="mt-4">
+            {{ form.hidden_tag() }}
+            <div class="mb-3">
+                {{ form.job_title.label(class="form-label") }}
+                {{ form.job_title(class="form-control") }}
+            </div>
+            <div class="mb-3">
+                {{ form.job_description.label(class="form-label") }}
+                {{ form.job_description(class="form-control", rows="5") }}
+            </div>
+            <div class="mb-3">
+                {{ form.eligibility.label(class="form-label") }}
+                {{ form.eligibility(class="form-control", rows="5") }}
+            </div>
+            <div class="mb-3">
+                {{ form.deadline.label(class="form-label") }}
+                {{ form.deadline(class="form-control") }}
+            </div>
+            {{ form.submit(class="btn btn-primary") }}
+            <a href="{{ url_for('company.dashboard') }}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

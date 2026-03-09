@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Company Dashboard{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2>Company Dashboard</h2>
+        <p class="text-muted">{{ company.name }}</p>
+    </div>
+    <div class="col-md-4 text-end">
+        {% if company.approval_status == 'approved' %}
+            <span class="badge bg-success">Approved</span>
+            <a href="{{ url_for('company.create_drive') }}" class="btn btn-primary">Create New Drive</a>
+        {% elif company.approval_status == 'pending' %}
+            <span class="badge bg-warning">Pending Approval</span>
+        {% else %}
+            <span class="badge bg-danger">Rejected</span>
+        {% endif %}
+    </div>
+</div>
+
+<h4>Your Placement Drives</h4>
+{% if drives %}
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Job Title</th>
+                    <th>Status</th>
+                    <th>Deadline</th>
+                    <th>Applicants</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for drive in drives %}
+                    <tr>
+                        <td>{{ drive.job_title }}</td>
+                        <td><span class="badge badge-{{ drive.status }}">{{ drive.status }}</span></td>
+                        <td>{{ drive.deadline.strftime('%Y-%m-%d') if drive.deadline else 'N/A' }}</td>
+                        <td>{{ drive.applications|length }}</td>
+                        <td>
+                            <a href="{{ url_for('company.view_drive', drive_id=drive.id) }}" class="btn btn-sm btn-info">View</a>
+                            {% if company.approval_status == 'approved' %}
+                                <a href="{{ url_for('company.edit_drive', drive_id=drive.id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                <a href="{{ url_for('company.delete_drive', drive_id=drive.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <p class="text-muted">No placement drives created yet.</p>
+{% endif %}
+
+<div class="mt-5 p-4 bg-light rounded">
+    <h5>Company Information</h5>
+    <p><strong>HR Contact:</strong> {{ company.hr_contact or 'Not provided' }}</p>
+    <p><strong>Website:</strong> <a href="{{ company.website }}" target="_blank">{{ company.website or 'Not provided' }}</a></p>
+</div>
+{% endblock %}

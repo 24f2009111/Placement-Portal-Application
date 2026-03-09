@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}{{ drive.job_title }}{% endblock %}
+
+{% block content %}
+<h2>{{ drive.job_title }}</h2>
+
+<div class="row mt-4">
+    <div class="col-md-8">
+        <h4>Job Description</h4>
+        <p>{{ drive.job_description }}</p>
+
+        <h4>Eligibility Criteria</h4>
+        <p>{{ drive.eligibility }}</p>
+
+        <h4>Application Deadline</h4>
+        <p>{{ drive.deadline.strftime('%Y-%m-%d %H:%M') if drive.deadline else 'N/A' }}</p>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>Drive Status</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Status:</strong> <span class="badge badge-{{ drive.status }}">{{ drive.status }}</span></p>
+                <p><strong>Total Applicants:</strong> {{ applications|length }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h4 class="mt-5">Applications</h4>
+{% if applications %}
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Application Date</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for application in applications %}
+                    <tr>
+                        <td>{{ application.student_profile.name }}</td>
+                        <td>{{ application.application_date.strftime('%Y-%m-%d') }}</td>
+                        <td>
+                            <span class="badge bg-{{ 'success' if application.status == 'selected' else 'warning' if application.status == 'shortlisted' else 'danger' if application.status == 'rejected' else 'info' }}">
+                                {{ application.status }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if application.status == 'applied' %}
+                                <a href="{{ url_for('company.update_application_status', app_id=application.id, status='shortlisted') }}" class="btn btn-sm btn-warning">Shortlist</a>
+                                <a href="{{ url_for('company.update_application_status', app_id=application.id, status='rejected') }}" class="btn btn-sm btn-danger">Reject</a>
+                            {% elif application.status == 'shortlisted' %}
+                                <a href="{{ url_for('company.update_application_status', app_id=application.id, status='selected') }}" class="btn btn-sm btn-success">Select</a>
+                                <a href="{{ url_for('company.update_application_status', app_id=application.id, status='rejected') }}" class="btn btn-sm btn-danger">Reject</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <p class="text-muted">No applications yet.</p>
+{% endif %}
+
+<a href="{{ url_for('company.dashboard') }}" class="btn btn-secondary mt-3">Back to Dashboard</a>
+{% endblock %}
