@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Placement Portal{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h2>Admin Dashboard</h2>
+        <p class="text-muted">Overview of placement system</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="dashboard-card">
+            <h5>Total Students</h5>
+            <p>{{ total_students }}</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="dashboard-card">
+            <h5>Total Companies</h5>
+            <p>{{ total_companies }}</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="dashboard-card">
+            <h5>Placement Drives</h5>
+            <p>{{ total_drives }}</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="dashboard-card">
+            <h5>Total Applications</h5>
+            <p>{{ total_applications }}</p>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-12">
+        <h4>Quick Actions</h4>
+        <a href="{{ url_for('admin.manage_companies') }}" class="btn btn-primary">Manage Companies</a>
+        <a href="{{ url_for('admin.manage_drives') }}" class="btn btn-primary">Manage Drives</a>
+        <a href="{{ url_for('admin.manage_students') }}" class="btn btn-primary">Manage Students</a>
+    </div>
+</div>
+{% endblock %}

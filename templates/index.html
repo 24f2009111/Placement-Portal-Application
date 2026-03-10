@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Placement Portal{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto text-center">
+        <h1 class="display-4 mb-4">Welcome to Placement Portal</h1>
+        <p class="lead mb-4">A comprehensive platform for managing campus recruitment activities.</p>
+        
+        {% if not current_user.is_authenticated %}
+            <div class="row mt-5">
+                <div class="col-md-6">
+                    <div class="card p-4">
+                        <h3>For Companies</h3>
+                        <p>Register your company and create placement drives to recruit talented students.</p>
+                        <a href="{{ url_for('auth.register_company') }}" class="btn btn-primary">Register as Company</a>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card p-4">
+                        <h3>For Students</h3>
+                        <p>Explore placement opportunities and apply for jobs that match your profile.</p>
+                        <a href="{{ url_for('auth.register_student') }}" class="btn btn-primary">Register as Student</a>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4">
+                <p>Already registered? <a href="{{ url_for('auth.login') }}">Login here</a></p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
