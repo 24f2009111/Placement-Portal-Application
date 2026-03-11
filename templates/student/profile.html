@@ -10,9 +10,28 @@
                 <h4>Student Profile</h4>
             </div>
             <div class="card-body">
-                <p><strong>Name:</strong> {{ student.name }}</p>
-                <p><strong>Contact:</strong> {{ student.contact or 'Not provided' }}</p>
-                <p><strong>Resume:</strong> {{ student.resume or 'Not uploaded' }}</p>
+                <form method="post" enctype="multipart/form-data">
+                    {{ form.csrf_token }}
+                    <div class="mb-3">
+                        {{ form.name.label(class="form-label") }}
+                        {{ form.name(class="form-control") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.contact.label(class="form-label") }}
+                        {{ form.contact(class="form-control") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.resume.label(class="form-label") }}
+                        {{ form.resume(class="form-control") }}
+                        {% if student.resume %}
+                            <p class="mt-1">
+                                Current file: <a href="{{ url_for('static', filename='resumes/' ~ student.resume) }}" target="_blank">{{ student.resume }}</a>
+                            </p>
+                        {% endif %}
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </form>
+                <hr>
                 <p><strong>Member Since:</strong> {{ student.user.created_at.strftime('%Y-%m-%d') if student.user.created_at else 'N/A' }}</p>
             </div>
         </div>

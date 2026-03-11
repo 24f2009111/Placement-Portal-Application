@@ -5,6 +5,11 @@
 {% block content %}
 <h2>Company Management</h2>
 
+<form class="d-flex mb-3" method="get" action="{{ url_for('admin.manage_companies') }}">
+    <input class="form-control me-2" type="search" placeholder="Search by name or ID" aria-label="Search" name="q" value="{{ query or '' }}">
+    <button class="btn btn-outline-primary" type="submit">Search</button>
+</form>
+
 <ul class="nav nav-tabs mb-4" role="tablist">
     <li class="nav-item">
         <a class="nav-link active" data-bs-toggle="tab" href="#pending">Pending ({{ pending|length }})</a>
@@ -40,6 +45,7 @@
                                 <td>
                                     <a href="{{ url_for('admin.approve_company', company_id=company.id) }}" class="btn btn-sm btn-success">Approve</a>
                                     <a href="{{ url_for('admin.reject_company', company_id=company.id) }}" class="btn btn-sm btn-danger">Reject</a>
+                                    <a href="{{ url_for('admin.deactivate_company', company_id=company.id) }}" class="btn btn-sm btn-warning">Deactivate</a>
                                 </td>
                             </tr>
                         {% endfor %}
@@ -61,6 +67,7 @@
                             <th>Company Name</th>
                             <th>HR Contact</th>
                             <th>Website</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -69,6 +76,9 @@
                                 <td>{{ company.name }}</td>
                                 <td>{{ company.hr_contact or 'N/A' }}</td>
                                 <td>{{ company.website or 'N/A' }}</td>
+                                <td>
+                                    <a href="{{ url_for('admin.deactivate_company', company_id=company.id) }}" class="btn btn-sm btn-warning">Deactivate</a>
+                                </td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -89,6 +99,7 @@
                             <th>Company Name</th>
                             <th>HR Contact</th>
                             <th>Website</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -97,6 +108,9 @@
                                 <td>{{ company.name }}</td>
                                 <td>{{ company.hr_contact or 'N/A' }}</td>
                                 <td>{{ company.website or 'N/A' }}</td>
+                                <td>
+                                    <a href="{{ url_for('admin.deactivate_company', company_id=company.id) }}" class="btn btn-sm btn-warning">Deactivate</a>
+                                </td>
                             </tr>
                         {% endfor %}
                     </tbody>

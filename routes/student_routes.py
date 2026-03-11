@@ -1,8 +1,21 @@
-from flask import Blueprint, render_template, redirect, url_for, flash
+import os
+from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app
 from flask_login import login_required, current_user
+from werkzeug.utils import secure_filename
+from wtforms import StringField, FileField, SubmitField
+from wtforms.validators import DataRequired
+from flask_wtf import FlaskForm
+from flask_wtf.file import FileAllowed
 from models import db, StudentProfile, PlacementDrive, Application
 
 student_bp = Blueprint('student', __name__, url_prefix='/student')
+
+# form for editing profile and uploading resume
+class StudentProfileForm(FlaskForm):
+    name = StringField('Full Name', validators=[DataRequired()])
+    contact = StringField('Contact')
+    resume = FileField('Resume (PDF)', validators=[FileAllowed(['pdf'], 'PDF only')])
+    submit = SubmitField('Save')
 
 @student_bp.route('/dashboard')
 @login_required
@@ -66,10 +79,26 @@ def placement_history():
     selected_applications = Application.query.filter_by(student_id=student.id, status='selected').all()
     return render_template('student/history.html', placements=selected_applications)
 
-@student_bp.route('/profile')
+@student_bp.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
     if current_user.role != 'student':
         return redirect(url_for('index'))
     student = StudentProfile.query.filter_by(user_id=current_user.id).first()
-    return render_template('student/profile.html', student=student)
+    form = StudentProfileForm()
+    if form.validate_on_submit():
+        student.name = form.name.data
+        student.contact = form.contact.data
+        # handle resume upload
+        if form.resume.data:
+            filename = secure_filename(form.resume.data.filename)
+            upload_folder = current_app.config.get('UPLOAD_FOLDER')
+            form.resume.data.save(os.path.join(upload_folder, filename))
+            student.resume = filename
+        db.session.commit()
+        flash('Profile updated successfully.', 'success')
+        return redirect(url_for('student.profile'))
+    elif request.method == 'GET':
+        form.name.data = student.name
+        form.contact.data = student.contact
+    return render_template('student/profile.html', student=student, form=form)

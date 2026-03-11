@@ -22,10 +22,20 @@ def dashboard():
 def manage_companies():
     if current_user.role != 'admin':
         return redirect(url_for('index'))
-    pending = CompanyProfile.query.filter_by(approval_status='pending').all()
-    approved = CompanyProfile.query.filter_by(approval_status='approved').all()
-    rejected = CompanyProfile.query.filter_by(approval_status='rejected').all()
-    return render_template('admin/companies.html', pending=pending, approved=approved, rejected=rejected)
+    query = request.args.get('q')
+    if query:
+        companies = CompanyProfile.query.filter(
+            (CompanyProfile.name.ilike(f'%{query}%')) |
+            (CompanyProfile.id == query)
+        ).all()
+        pending = [c for c in companies if c.approval_status == 'pending']
+        approved = [c for c in companies if c.approval_status == 'approved']
+        rejected = [c for c in companies if c.approval_status == 'rejected']
+    else:
+        pending = CompanyProfile.query.filter_by(approval_status='pending').all()
+        approved = CompanyProfile.query.filter_by(approval_status='approved').all()
+        rejected = CompanyProfile.query.filter_by(approval_status='rejected').all()
+    return render_template('admin/companies.html', pending=pending, approved=approved, rejected=rejected, query=query)
 
 @admin_bp.route('/approve-company/<int:company_id>')
 @login_required
@@ -89,7 +99,8 @@ def manage_students():
     if query:
         students = StudentProfile.query.filter(
             (StudentProfile.name.ilike(f'%{query}%')) |
-            (StudentProfile.contact.ilike(f'%{query}%'))
+            (StudentProfile.contact.ilike(f'%{query}%')) |
+            (StudentProfile.id == query)
         ).all()
     else:
         students = StudentProfile.query.all()
@@ -106,3 +117,15 @@ def deactivate_student(student_id):
     db.session.commit()
     flash(f'Student {student.name} deactivated.', 'warning')
     return redirect(url_for('admin.manage_students'))
+
+@admin_bp.route('/deactivate-company/<int:company_id>')
+@login_required
+def deactivate_company(company_id):
+    if current_user.role != 'admin':
+        return redirect(url_for('index'))
+    company = CompanyProfile.query.get_or_404(company_id)
+    user = User.query.get(company.user_id)
+    user.is_active = False
+    db.session.commit()
+    flash(f'Company {company.name} deactivated.', 'warning')
+    return redirect(url_for('admin.manage_companies'))

@@ -36,6 +36,12 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user and check_password_hash(user.password, form.password.data) and user.is_active:
+            # company must also be approved
+            if user.role == 'company':
+                company = CompanyProfile.query.filter_by(user_id=user.id).first()
+                if not company or company.approval_status != 'approved':
+                    flash('Company account not approved yet or has been rejected.', 'warning')
+                    return redirect(url_for('auth.login'))
             login_user(user)
             return redirect(url_for('index'))
         flash('Invalid credentials or account inactive.', 'danger')
@@ -51,6 +57,10 @@ def logout():
 def register_company():
     form = CompanyRegistrationForm()
     if form.validate_on_submit():
+        # prevent duplicate usernames/emails
+        if User.query.filter((User.username==form.username.data)|(User.email==form.email.data)).first():
+            flash('Username or email already exists.', 'danger')
+            return render_template('register_company.html', form=form)
         hashed_password = generate_password_hash(form.password.data)
         user = User(username=form.username.data, email=form.email.data, password=hashed_password, role='company')
         db.session.add(user)
@@ -66,6 +76,9 @@ def register_company():
 def register_student():
     form = StudentRegistrationForm()
     if form.validate_on_submit():
+        if User.query.filter((User.username==form.username.data)|(User.email==form.email.data)).first():
+            flash('Username or email already exists.', 'danger')
+            return render_template('register_student.html', form=form)
         hashed_password = generate_password_hash(form.password.data)
         user = User(username=form.username.data, email=form.email.data, password=hashed_password, role='student')
         db.session.add(user)

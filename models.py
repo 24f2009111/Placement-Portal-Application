@@ -39,6 +39,8 @@ class PlacementDrive(db.Model):
     deadline = db.Column(db.DateTime)
     status = db.Column(db.String(50), default='pending')  # 'pending', 'approved', 'closed'
     applications = db.relationship('Application', backref='drive', lazy=True)
+    # relationship to company profile for easy access in templates
+    company = db.relationship('CompanyProfile', backref='drives', lazy=True)
 
 class Application(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -46,3 +48,4 @@ class Application(db.Model):
     drive_id = db.Column(db.Integer, db.ForeignKey('placement_drive.id'), nullable=False)
     application_date = db.Column(db.DateTime, default=datetime.utcnow)
     status = db.Column(db.String(50), default='applied')  # 'applied', 'shortlisted', 'selected', 'rejected'
+    student_profile = db.relationship('StudentProfile', backref='applications')

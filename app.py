@@ -1,3 +1,4 @@
+import os
 from flask import Flask, render_template, redirect, url_for
 from flask_login import LoginManager, current_user
 from models import db, User
@@ -10,6 +11,10 @@ from werkzeug.security import generate_password_hash
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'placement_portal_secret_key_2026'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///placement.db'
+# directory for storing uploaded resumes
+upload_dir = os.path.join(os.path.dirname(__file__), 'static', 'resumes')
+os.makedirs(upload_dir, exist_ok=True)
+app.config['UPLOAD_FOLDER'] = upload_dir
 
 db.init_app(app)
 
